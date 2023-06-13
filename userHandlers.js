@@ -109,7 +109,7 @@ const updateUser = (req, res) => {
     database
       .query(
         "update users set firstname = ?, lastname = ?, email = ?, city = ?, language = ?, hashedPassword = ? where id = ?",
-        [firstname, lastname, email, city, language, id, hashedPassword]
+        [firstname, lastname, email, city, language, hashedPassword, id]
       )
       .then(([result]) => {
         if (result.affectedRows === 0) {
