@@ -1,12 +1,50 @@
 require("dotenv").config();
 const database = require("./database");
 
+//reponse express06 get details :
+const getUsers = (req, res) => {
+  const initialSql = "select * from users";
+  const where = [];
+
+  if (req.query.city != null) {
+    where.push({
+      column: "city",
+      value: req.query.city,
+      operator: "=",
+    });
+  }
+  if (req.query.language != null) {
+    where.push({
+      column: "language",
+      value: req.query.language,
+      operator: "=",
+    });
+  }
+
+  database
+    .query(
+      where.reduce(
+        (sql, { column, operator }, index) =>
+          `${sql} ${index === 0 ? "where" : "and"} ${column} ${operator} ?`,
+        initialSql
+      ),
+      where.map(({ value }) => value)
+    )
+    .then(([users]) => {
+      res.json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+//fin de le reponse express06 get details
 
 /*const getUsers = (req, res) => {
   res.json(users);
 };*/
 
-const getUsers = (req, res) => {
+/*const getUsers = (req, res) => {
   database
     .query("select * from users")
     .then(([users]) => {
@@ -16,7 +54,7 @@ const getUsers = (req, res) => {
       console.error(err);
       res.status(500).send("Error retrieving data from database");
     });
-};
+};*/
 
 /*
 const getUserById = (req, res) => {
@@ -103,6 +141,7 @@ const deleteUser = (req, res) => {
       res.status(500).send("Error deleting the user");
     });
 };
+
 
 module.exports = {
   getUsers,
