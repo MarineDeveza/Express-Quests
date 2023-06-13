@@ -3,7 +3,7 @@ const database = require("./database");
 
 //reponse express06 get details :
 const getUsers = (req, res) => {
-  const initialSql = "select * from users";
+  const initialSql = "select id, firstname, lastname, email, city, language from users";
   const where = [];
 
   if (req.query.city != null) {
@@ -71,7 +71,7 @@ const getUserById = (req, res) => {
 const getUserById = (req, res) => {
   const id = parseInt(req.params.id);
   database
-    .query("select * from users where id = ?", [id])
+    .query("select id, firstname, lastname, email, city, language from users where id = ?", [id])
     .then(([users]) => {
       if (users[0] != null) {
         res.json(users[0]);
@@ -86,12 +86,12 @@ const getUserById = (req, res) => {
   };
 
 const postUser = (req, res) => {
-  const { firstname, lastname, email, city, language } = req.body;
+  const { firstname, lastname, email, city, language, hashedPassword } = req.body;
   
   database
     .query(
-      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
-      [firstname, lastname, email, city, language]
+      "INSERT INTO users(firstname, lastname, email, city, language, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)",
+      [firstname, lastname, email, city, language, hashedPassword]
     )
     .then(([result]) => {
       res.location(`/api/users/${result.insertId}`).sendStatus(201);
@@ -104,12 +104,12 @@ const postUser = (req, res) => {
 
 const updateUser = (req, res) => {
     const id = parseInt(req.params.id);
-    const { firstname, lastname, email, city, language } = req.body;
+    const { firstname, lastname, email, city, language, hashedPassword } = req.body;
   
     database
       .query(
-        "update users set firstname = ?, lastname = ?, email = ?, city = ?, language = ? where id = ?",
-        [firstname, lastname, email, city, language, id]
+        "update users set firstname = ?, lastname = ?, email = ?, city = ?, language = ?, hashedPassword = ? where id = ?",
+        [firstname, lastname, email, city, language, id, hashedPassword]
       )
       .then(([result]) => {
         if (result.affectedRows === 0) {

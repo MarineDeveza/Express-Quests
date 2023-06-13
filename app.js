@@ -23,9 +23,16 @@ app.delete("/api/movies/:id", movieHandlers.deleteMovie);
 
 app.get("/api/users", userHandlers.getUsers);
 app.get("/api/users/:id", userHandlers.getUserById);
-app.post("/api/users", userHandlers.postUser);
-app.put("/api/users/:id", userHandlers.updateUser);
+// app.post("/api/users", userHandlers.postUser);
+// app.put("/api/users/:id", userHandlers.updateUser);
 app.delete("/api/users/:id", userHandlers.deleteUser);
+
+// in app.js
+
+const { hashPassword } = require("./auth.js");
+
+app.post("/api/users", hashPassword, userHandlers.postUser);
+app.put("/api/users/:id", hashPassword, userHandlers.updateUser);
 
 app.listen(port, (err) => {
   if (err) {
